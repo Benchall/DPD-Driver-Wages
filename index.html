@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap">
 <style>
-/* Layout: a period bar on top, summary tiles, then a logging form beside the day / week / 4-week views (stacked on phones). */
+/* Layout: a period bar on top, summary tiles, then the logging forms beside the day / week / 4-week views (stacked on phones). */
 :root {
   --bg: #f2f3f6;
   --surface: #ffffff;
@@ -19,7 +19,9 @@
   --little: #fbe8dc;
   --little-ink: #8a3209;
   --good: #17703f;
+  --good-bg: #e2f3e9;
   --bad: #b42318;
+  --bad-bg: #fbe4e1;
   --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
   --font-body: "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
   --radius: 10px;
@@ -28,18 +30,18 @@
   :root:not([data-theme="light"]) {
     --bg: #0f1218; --surface: #171b24; --sunk: #1f2430; --ink: #e9ecf3; --muted: #9aa3b5; --line: #2a3140;
     --accent: #ff7b3a; --accent-ink: #1b0b02; --big: #1f2a42; --big-ink: #a9c1f2; --little: #3a2416; --little-ink: #ffb98f;
-    --good: #52c98a; --bad: #ff6e61; color-scheme: dark;
+    --good: #52c98a; --good-bg: #16301f; --bad: #ff6e61; --bad-bg: #3a1a17; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0f1218; --surface: #171b24; --sunk: #1f2430; --ink: #e9ecf3; --muted: #9aa3b5; --line: #2a3140;
   --accent: #ff7b3a; --accent-ink: #1b0b02; --big: #1f2a42; --big-ink: #a9c1f2; --little: #3a2416; --little-ink: #ffb98f;
-  --good: #52c98a; --bad: #ff6e61; color-scheme: dark;
+  --good: #52c98a; --good-bg: #16301f; --bad: #ff6e61; --bad-bg: #3a1a17; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.45; }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
-.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .num, td, .tile b { font-variant-numeric: tabular-nums; }
 h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; text-wrap: balance; letter-spacing: .01em; }
 .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); font-weight: 600; }
@@ -59,19 +61,24 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; text
 main.wrap { display: grid; gap: 18px; padding-block: 18px 40px; }
 .banner { padding: 10px 14px; border-radius: var(--radius); background: var(--little); color: var(--little-ink); font-weight: 500; }
 
-.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
 .tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 2px; }
-.tile b { font-family: var(--font-display); font-size: 28px; font-weight: 600; }
+.tile b { font-family: var(--font-display); font-size: 26px; font-weight: 600; }
+.tile.plus b { color: var(--good); }
+.tile.minus b { color: var(--bad); }
 .tile.pay { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .tile.pay .eyebrow { color: inherit; opacity: .85; }
 
-.cols { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 18px; align-items: start; }
+.cols { display: grid; grid-template-columns: 350px minmax(0, 1fr); gap: 18px; align-items: start; }
+.side { display: grid; gap: 14px; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
-.form-card { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 80px); display: grid; gap: 12px; }
+.form-card { display: grid; gap: 12px; }
 .form-card h2 { font-size: 21px; }
+.form-card form > div { display: grid; gap: 12px; }
 label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); }
-input[type=text], input[type=number], input[type=date] { width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; }
-input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+label .opt { font-weight: 500; }
+input[type=text], input[type=number], input[type=date], select { width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; }
+input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .seg { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
 .seg input { position: absolute; opacity: 0; pointer-events: none; }
@@ -82,6 +89,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); ou
 .seg input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: -2px; }
 .preview { background: var(--sunk); border-radius: 8px; padding: 10px 12px; font-size: 14px; }
 .preview b { font-size: 17px; }
+.preview.plus b { color: var(--good); }
+.preview.minus b { color: var(--bad); }
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .btn { font: inherit; font-weight: 600; border-radius: 8px; padding: 10px 16px; cursor: pointer; border: 1px solid var(--line); background: var(--sunk); color: var(--ink); }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); flex: 1; }
@@ -101,16 +110,21 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); ou
 .block-head h3 { font-size: 20px; }
 .block-head .meta { font-size: 13px; color: var(--muted); }
 .block-head .meta b { color: var(--ink); }
+.subhead { padding: 8px 14px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); border-top: 1px solid var(--line); }
 .scroll { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 14px; }
 th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 600; padding: 8px 14px; background: var(--sunk); white-space: nowrap; }
 td { padding: 9px 14px; border-top: 1px solid var(--line); white-space: nowrap; }
+td.wrapcell { white-space: normal; min-width: 120px; color: var(--muted); }
 th.r, td.r { text-align: right; }
 tfoot td { font-weight: 600; background: var(--sunk); }
 td.net { font-weight: 600; }
-td.neg { color: var(--bad); }
+td.neg, .minus-t { color: var(--bad); }
+.plus-t { color: var(--good); }
 .chip { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--big); color: var(--big-ink); }
 .chip.little { background: var(--little); color: var(--little-ink); }
+.chip.charge { background: var(--bad-bg); color: var(--bad); }
+.chip.pay { background: var(--good-bg); color: var(--good); }
 .rowbtns { display: flex; gap: 6px; justify-content: flex-end; }
 .mini { font: inherit; font-size: 12px; font-weight: 600; padding: 4px 9px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
 .mini.armed { background: var(--bad); border-color: var(--bad); color: #fff; }
@@ -119,20 +133,20 @@ td.neg { color: var(--bad); }
 .note { font-size: 13px; color: var(--muted); margin: 0; }
 
 .settings summary { cursor: pointer; font-family: var(--font-display); font-size: 20px; font-weight: 700; }
-.settings form { display: grid; gap: 12px; margin-top: 14px; max-width: 620px; }
+.settings form { display: grid; gap: 12px; margin-top: 14px; max-width: 640px; }
 .settings .row3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 
+@media (max-width: 1100px) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 860px) {
   .cols { grid-template-columns: minmax(0, 1fr); }
-  .form-card { position: static; }
-  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 480px) {
+@media (max-width: 520px) {
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .settings .row3 { grid-template-columns: 1fr; }
   .period > div { min-width: 0; }
   .top h1 { font-size: 22px; }
 }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 </style>
 
 <header class="top"><div class="wrap">
@@ -143,7 +157,7 @@ td.neg { color: var(--bad); }
   <nav class="period" aria-label="Pay period">
     <button class="iconbtn" id="prevP" type="button" aria-label="Previous pay period">‹</button>
     <div>
-      <span class="eyebrow">4-week pay period <span id="pNum"></span></span>
+      <span class="eyebrow">4-week pay period</span>
       <strong id="pRange">–</strong>
       <button class="linkbtn" id="thisP" type="button" hidden>Back to current period</button>
     </div>
@@ -156,16 +170,18 @@ td.neg { color: var(--bad); }
 
   <section class="tiles" aria-label="Period totals">
     <div class="tile"><span class="eyebrow">Stops</span><b id="tStops">0</b></div>
-    <div class="tile"><span class="eyebrow">Earned</span><b id="tGross">£0.00</b></div>
-    <div class="tile"><span class="eyebrow">Van hire</span><b id="tHire">£0.00</b></div>
+    <div class="tile"><span class="eyebrow">Earned from stops</span><b id="tGross">£0.00</b></div>
+    <div class="tile plus"><span class="eyebrow">Bonuses and extras</span><b id="tExtras">£0.00</b></div>
+    <div class="tile minus"><span class="eyebrow">Van hire</span><b id="tHire">£0.00</b></div>
+    <div class="tile minus"><span class="eyebrow">Charges</span><b id="tCharges">£0.00</b></div>
     <div class="tile pay"><span class="eyebrow">To pay drivers</span><b id="tNet">£0.00</b></div>
   </section>
 
   <div class="cols">
-    <section class="card form-card" aria-labelledby="formTitle">
-      <h2 id="formTitle">Log a route</h2>
-      <form id="shiftForm" novalidate>
-        <div style="display:grid;gap:12px">
+    <div class="side">
+      <section class="card form-card" aria-labelledby="formTitle">
+        <h2 id="formTitle">Log a route</h2>
+        <form id="shiftForm" novalidate><div>
           <label for="fDate">Date<input type="date" id="fDate" required></label>
           <label for="fDriver">Driver name<input type="text" id="fDriver" list="dlDrivers" autocomplete="off" placeholder="e.g. Jamie Clarke" required></label>
           <div class="row2">
@@ -186,10 +202,44 @@ td.neg { color: var(--bad); }
             <button class="btn" type="button" id="cancelEdit" hidden>Cancel edit</button>
           </div>
           <p class="msg" id="formMsg" role="status"></p>
-        </div>
-      </form>
+        </div></form>
+      </section>
+
+      <section class="card form-card" aria-labelledby="adjTitle">
+        <h2 id="adjTitle">Add a charge or payment</h2>
+        <form id="adjForm" novalidate><div>
+          <div class="row2">
+            <label for="aDate">Date<input type="date" id="aDate" required></label>
+            <label for="aDriver">Driver name<input type="text" id="aDriver" list="dlDrivers" autocomplete="off" placeholder="e.g. Jamie Clarke" required></label>
+          </div>
+          <label for="aType">Type
+            <select id="aType">
+              <optgroup label="Taken off pay">
+                <option value="dropped">Dropped route</option>
+                <option value="damage">Van damage</option>
+                <option value="parking">Parking ticket</option>
+                <option value="advance">Advance payment</option>
+                <option value="fuel">Fuel over allowance</option>
+              </optgroup>
+              <optgroup label="Added to pay">
+                <option value="bonus">Bonus</option>
+                <option value="ridealong">Ridealong (one day)</option>
+                <option value="topup">Top up</option>
+              </optgroup>
+            </select>
+          </label>
+          <label for="aAmount">Amount (£)<input type="number" id="aAmount" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 45.00" required></label>
+          <label for="aNote">Note <span class="opt">(optional)</span><input type="text" id="aNote" autocomplete="off" placeholder="e.g. PCN reference, what was damaged"></label>
+          <div class="preview" id="aPreview" aria-live="polite">Enter an amount.</div>
+          <div class="actions">
+            <button class="btn primary" type="submit" id="aSaveBtn">Save</button>
+            <button class="btn" type="button" id="aCancelEdit" hidden>Cancel edit</button>
+          </div>
+          <p class="msg" id="aMsg" role="status"></p>
+        </div></form>
+      </section>
       <datalist id="dlDrivers"></datalist><datalist id="dlRoutes"></datalist><datalist id="dlDepots"></datalist>
-    </section>
+    </div>
 
     <section class="views">
       <div class="tabs" role="tablist" aria-label="Breakdown">
@@ -209,11 +259,15 @@ td.neg { color: var(--bad); }
         <label for="sLittle">Little van, per stop (£)<input type="number" id="sLittle" step="0.01" min="0" inputmode="decimal"></label>
         <label for="sHire">Van hire, per day (£)<input type="number" id="sHire" step="0.01" min="0" inputmode="decimal"></label>
       </div>
+      <div class="row3">
+        <label for="sDropped">Dropped route charge (£)<input type="number" id="sDropped" step="0.01" min="0" inputmode="decimal"></label>
+        <label for="sRide">Ridealong, per day (£)<input type="number" id="sRide" step="0.01" min="0" inputmode="decimal"></label>
+      </div>
       <label for="sStart">First day of a 4-week pay period<input type="date" id="sStart"></label>
       <p class="note">Any start date works, past or future. Every period after it runs for 28 days, then resets.</p>
       <label for="sLittleRoutes">Little van route numbers<input type="text" id="sLittleRoutes" placeholder="e.g. 901, 902"></label>
       <p class="note">Separate route numbers with commas. When you type one of these routes, the form switches to little van for you.</p>
-      <p class="note">New rates apply to routes you log after saving. Routes already logged keep the rate they were saved with.</p>
+      <p class="note">New rates apply to entries you add after saving. Entries already logged keep the amount they were saved with.</p>
       <div class="actions"><button class="btn primary" type="submit" id="saveSettings" style="flex:0 1 auto">Save settings</button></div>
       <p class="msg" id="settingsMsg" role="status"></p>
     </form>
@@ -223,10 +277,23 @@ td.neg { color: var(--bad); }
 <script>
 (function () {
   const DAY = 864e5;
-  const DEFAULT_SETTINGS = { bigRate: 1.2, littleRate: 1, vanHire: 10, periodStart: "2026-11-02", littleRoutes: [] };
+  const DEFAULT_SETTINGS = { bigRate: 1.2, littleRate: 1, vanHire: 10, droppedCharge: 100, ridealongRate: 50, periodStart: "2026-11-02", littleRoutes: [] };
+  // Charges come off a driver's pay; payments are added to it.
+  const TYPES = {
+    dropped:   { label: "Dropped route",       kind: "charge", def: () => state.settings.droppedCharge },
+    damage:    { label: "Van damage",          kind: "charge" },
+    parking:   { label: "Parking ticket",      kind: "charge" },
+    advance:   { label: "Advance payment",     kind: "charge" },
+    fuel:      { label: "Fuel over allowance", kind: "charge" },
+    bonus:     { label: "Bonus",               kind: "pay" },
+    ridealong: { label: "Ridealong",           kind: "pay", def: () => state.settings.ridealongRate },
+    topup:     { label: "Top up",              kind: "pay" },
+  };
+  const typeOf = (a) => TYPES[a.type] || { label: a.type, kind: a.kind === "pay" ? "pay" : "charge" };
+
   const state = {
     settings: { ...DEFAULT_SETTINGS },
-    shifts: [], periodIdx: 0, navigated: false, tab: "day", editing: null,
+    shifts: [], adjs: [], periodIdx: 0, navigated: false, tab: "day", editing: null, editingAdj: null,
     db: null, canWrite: true, loading: true,
   };
   const $ = (id) => document.getElementById(id);
@@ -241,6 +308,7 @@ td.neg { color: var(--bad); }
   const longD = (s) => fmtDate(s, { weekday: "long", day: "numeric", month: "long" });
   const gbp = new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" });
   const money = (p) => gbp.format(p / 100);
+  const signed = (p) => (p > 0 ? "+" : "") + money(p);
   const pence = (pounds) => Math.round(Number(pounds) * 100);
   const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -252,71 +320,103 @@ td.neg { color: var(--bad); }
 
   // ---------- pay maths ----------
   const shiftPay = (s) => Math.round((Number(s.stops) || 0) * pence(s.rate));
-  function byDriver(shifts) {
+  const adjSigned = (a) => (typeOf(a).kind === "pay" ? 1 : -1) * pence(a.amount);
+  function byDriver(shifts, adjs) {
     const map = new Map();
-    for (const s of shifts) {
-      const key = s.driver.trim().toLowerCase();
+    const get = (name) => {
+      const key = name.trim().toLowerCase();
       let r = map.get(key);
-      if (!r) { r = { name: s.driver.trim(), stops: 0, gross: 0, days: new Map(), routes: 0 }; map.set(key, r); }
+      if (!r) { r = { name: name.trim(), stops: 0, gross: 0, extras: 0, charges: 0, days: new Map(), routes: 0 }; map.set(key, r); }
+      return r;
+    };
+    for (const s of shifts) {
+      const r = get(s.driver);
       r.stops += Number(s.stops) || 0;
       r.gross += shiftPay(s);
       r.routes++;
       // Van hire comes off once per day worked, even if a driver does two routes that day.
       r.days.set(s.date, Math.max(r.days.get(s.date) || 0, pence(s.vanHire || 0)));
     }
+    for (const a of adjs || []) {
+      const r = get(a.driver);
+      if (typeOf(a).kind === "pay") r.extras += pence(a.amount); else r.charges += pence(a.amount);
+    }
     for (const r of map.values()) {
       r.hire = [...r.days.values()].reduce((a, b) => a + b, 0);
-      r.net = r.gross - r.hire;
+      r.net = r.gross + r.extras - r.hire - r.charges;
     }
     return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
   }
-  const totals = (rows) => rows.reduce((t, r) => ({ stops: t.stops + r.stops, gross: t.gross + r.gross, hire: t.hire + r.hire, net: t.net + r.net, days: t.days + r.days.size }), { stops: 0, gross: 0, hire: 0, net: 0, days: 0 });
+  const totals = (rows) => rows.reduce((t, r) => ({
+    stops: t.stops + r.stops, gross: t.gross + r.gross, extras: t.extras + r.extras, charges: t.charges + r.charges,
+    hire: t.hire + r.hire, net: t.net + r.net, days: t.days + r.days.size,
+  }), { stops: 0, gross: 0, extras: 0, charges: 0, hire: 0, net: 0, days: 0 });
 
   // ---------- rendering ----------
   function renderHeader() {
     const s = state.settings;
-    $("rateLine").textContent = `Big van ${money(pence(s.bigRate))} a stop · Little van ${money(pence(s.littleRate))} a stop · Van hire ${money(pence(s.vanHire))} a day`;
+    $("rateLine").textContent = `Big van ${money(pence(s.bigRate))} a stop · Little van ${money(pence(s.littleRate))} a stop · Van hire ${money(pence(s.vanHire))} a day · Dropped route ${money(pence(s.droppedCharge))} · Ridealong ${money(pence(s.ridealongRate))} a day`;
     $("bigRateLbl").textContent = `${money(pence(s.bigRate))} a stop`;
     $("littleRateLbl").textContent = `${money(pence(s.littleRate))} a stop`;
     const st = periodStart(state.periodIdx), en = periodEnd(state.periodIdx);
     $("pRange").textContent = `${shortD(st)} – ${fmtDate(en, { day: "numeric", month: "short", year: "numeric" })}`;
-    $("pNum").textContent = "";
     $("thisP").hidden = state.periodIdx === idxFor(todayS());
-    const t = totals(byDriver(state.shifts));
+    const t = totals(byDriver(state.shifts, state.adjs));
     $("tStops").textContent = t.stops.toLocaleString("en-GB");
     $("tGross").textContent = money(t.gross);
+    $("tExtras").textContent = signed(t.extras);
     $("tHire").textContent = money(-t.hire);
+    $("tCharges").textContent = money(-t.charges);
     $("tNet").textContent = money(t.net);
   }
 
-  function rowActions(s) {
+  function rowActions(id, coll) {
     if (!state.canWrite) return "";
-    return `<div class="rowbtns"><button type="button" class="mini" data-edit="${esc(s.id)}">Edit</button><button type="button" class="mini" data-del="${esc(s.id)}">Delete</button></div>`;
+    return `<div class="rowbtns"><button type="button" class="mini" data-edit="${esc(id)}" data-coll="${coll}">Edit</button><button type="button" class="mini" data-del="${esc(id)}" data-coll="${coll}">Delete</button></div>`;
   }
   const vanChip = (s) => `<span class="chip ${s.van === "little" ? "little" : ""}">${s.van === "little" ? "Little" : "Big"}</span>`;
+  const typeChip = (a) => { const t = typeOf(a); return `<span class="chip ${t.kind === "pay" ? "pay" : "charge"}">${esc(t.label)}</span>`; };
+  const amountCell = (a) => { const v = adjSigned(a); return `<td class="r ${v < 0 ? "minus-t" : "plus-t"}">${signed(v)}</td>`; };
 
   function emptyState() {
-    if (state.loading) return `<div class="block empty"><h3>Loading routes…</h3><p>Fetching this pay period.</p></div>`;
-    return `<div class="block empty"><h3>No routes logged in this period</h3><p>Use <b>Log a route</b> to add a driver's day: their name, route number, depot, van and stop count. Pay and van hire are worked out for you.</p></div>`;
+    if (state.loading) return `<div class="block empty"><h3>Loading…</h3><p>Fetching this pay period.</p></div>`;
+    return `<div class="block empty"><h3>Nothing logged in this period</h3><p>Use <b>Log a route</b> to add a driver's day: their name, route number, depot, van and stop count. Use <b>Add a charge or payment</b> for dropped routes, damage, tickets, advances, fuel, bonuses, ridealongs and top ups.</p></div>`;
+  }
+
+  function adjTable(list, showDate) {
+    const rows = list.map((a) => `<tr>${showDate ? `<td>${esc(shortD(a.date))}</td>` : ""}<td>${esc(a.driver)}</td><td>${typeChip(a)}</td><td class="wrapcell">${esc(a.note || "")}</td>${amountCell(a)}<td>${rowActions(a.id, "adjustments")}</td></tr>`).join("");
+    return `<div class="scroll"><table>
+      <thead><tr>${showDate ? "<th>Date</th>" : ""}<th>Driver</th><th>Type</th><th>Note</th><th class="r">Amount</th><th></th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
   }
 
   function renderDay() {
-    if (!state.shifts.length) return emptyState();
+    if (!state.shifts.length && !state.adjs.length) return emptyState();
     const days = new Map();
-    for (const s of state.shifts) { if (!days.has(s.date)) days.set(s.date, []); days.get(s.date).push(s); }
+    const bucket = (d) => { if (!days.has(d)) days.set(d, { shifts: [], adjs: [] }); return days.get(d); };
+    state.shifts.forEach((s) => bucket(s.date).shifts.push(s));
+    state.adjs.forEach((a) => bucket(a.date).adjs.push(a));
     return [...days.keys()].sort().reverse().map((d) => {
-      const list = days.get(d).sort((a, b) => a.driver.localeCompare(b.driver) || String(a.route).localeCompare(String(b.route)));
-      const t = totals(byDriver(list));
-      const rows = list.map((s) => `<tr>
+      const { shifts, adjs } = days.get(d);
+      shifts.sort((a, b) => a.driver.localeCompare(b.driver) || String(a.route).localeCompare(String(b.route)));
+      adjs.sort((a, b) => a.driver.localeCompare(b.driver));
+      const t = totals(byDriver(shifts, adjs));
+      const bits = [];
+      if (shifts.length) bits.push(`${shifts.length} route${shifts.length === 1 ? "" : "s"}`, `<b>${t.stops.toLocaleString("en-GB")}</b> stops`, `earned <b>${money(t.gross)}</b>`, `van hire <b>${money(-t.hire)}</b>`);
+      if (t.extras) bits.push(`extras <b>${signed(t.extras)}</b>`);
+      if (t.charges) bits.push(`charges <b>${money(-t.charges)}</b>`);
+      bits.push(`net <b>${money(t.net)}</b>`);
+      const routeRows = shifts.map((s) => `<tr>
         <td>${esc(s.driver)}</td><td>${esc(s.route)}</td><td>${esc(s.depot)}</td><td>${vanChip(s)}</td>
         <td class="r">${Number(s.stops).toLocaleString("en-GB")}</td><td class="r">${money(pence(s.rate))}</td><td class="r">${money(shiftPay(s))}</td>
-        <td>${rowActions(s)}</td></tr>`).join("");
+        <td>${rowActions(s.id, "shifts")}</td></tr>`).join("");
       return `<article class="block">
-        <div class="block-head"><h3>${esc(longD(d))}</h3>
-          <span class="meta">${list.length} route${list.length === 1 ? "" : "s"} · <b>${t.stops.toLocaleString("en-GB")}</b> stops · earned <b>${money(t.gross)}</b> · van hire <b>${money(-t.hire)}</b> · net <b>${money(t.net)}</b></span></div>
-        <div class="scroll"><table>
+        <div class="block-head"><h3>${esc(longD(d))}</h3><span class="meta">${bits.join(" · ")}</span></div>
+        ${shifts.length ? `<div class="scroll"><table>
           <thead><tr><th>Driver</th><th>Route</th><th>Depot</th><th>Van</th><th class="r">Stops</th><th class="r">Rate</th><th class="r">Earned</th><th></th></tr></thead>
-          <tbody>${rows}</tbody></table></div></article>`;
+          <tbody>${routeRows}</tbody></table></div>` : ""}
+        ${adjs.length ? `<div class="subhead">Charges and payments</div>${adjTable(adjs, false)}` : ""}
+      </article>`;
     }).join("");
   }
 
@@ -324,48 +424,53 @@ td.neg { color: var(--bad); }
     const t = totals(rows);
     const extraHead = extraCols ? extraCols.map((c) => `<th class="r">${esc(c.label)}</th>`).join("") : "";
     const body = rows.map((r) => `<tr><td>${esc(r.name)}</td><td class="r">${r.days.size}</td><td class="r">${r.stops.toLocaleString("en-GB")}</td>
+      <td class="r">${money(r.gross)}</td><td class="r ${r.extras ? "plus-t" : ""}">${r.extras ? signed(r.extras) : "–"}</td>
+      <td class="r">${money(-r.hire)}</td><td class="r ${r.charges ? "minus-t" : ""}">${r.charges ? money(-r.charges) : "–"}</td>
       ${extraCols ? extraCols.map((c) => `<td class="r">${c.cell(r)}</td>`).join("") : ""}
-      <td class="r">${money(r.gross)}</td><td class="r">${money(-r.hire)}</td><td class="r net ${r.net < 0 ? "neg" : ""}">${money(r.net)}</td></tr>`).join("");
+      <td class="r net ${r.net < 0 ? "neg" : ""}">${money(r.net)}</td></tr>`).join("");
     const extraFoot = extraCols ? extraCols.map((c) => `<td class="r">${c.foot ? c.foot() : ""}</td>`).join("") : "";
     return `<div class="scroll"><table>
-      <thead><tr><th>Driver</th><th class="r">Days</th><th class="r">Stops</th>${extraHead}<th class="r">Earned</th><th class="r">Van hire</th><th class="r">To pay</th></tr></thead>
+      <thead><tr><th>Driver</th><th class="r">Days</th><th class="r">Stops</th><th class="r">Earned</th><th class="r">Extras</th><th class="r">Van hire</th><th class="r">Charges</th>${extraHead}<th class="r">To pay</th></tr></thead>
       <tbody>${body}</tbody>
-      <tfoot><tr><td>Total</td><td class="r">${t.days}</td><td class="r">${t.stops.toLocaleString("en-GB")}</td>${extraFoot}<td class="r">${money(t.gross)}</td><td class="r">${money(-t.hire)}</td><td class="r">${money(t.net)}</td></tr></tfoot>
+      <tfoot><tr><td>Total</td><td class="r">${t.days}</td><td class="r">${t.stops.toLocaleString("en-GB")}</td><td class="r">${money(t.gross)}</td><td class="r">${signed(t.extras)}</td><td class="r">${money(-t.hire)}</td><td class="r">${money(-t.charges)}</td>${extraFoot}<td class="r">${money(t.net)}</td></tr></tfoot>
     </table></div>`;
   }
 
   function weeksOf() {
     const st = periodStart(state.periodIdx);
+    const inWeek = (a, b) => (x) => x.date >= a && x.date <= b;
     return [0, 1, 2, 3].map((w) => {
-      const a = addDays(st, w * 7), b = addDays(a, 6);
-      return { n: w + 1, a, b, shifts: state.shifts.filter((s) => s.date >= a && s.date <= b) };
+      const a = addDays(st, w * 7), b = addDays(a, 6), f = inWeek(a, b);
+      return { n: w + 1, a, b, shifts: state.shifts.filter(f), adjs: state.adjs.filter(f) };
     });
   }
 
   function renderWeek() {
-    if (!state.shifts.length) return emptyState();
+    if (!state.shifts.length && !state.adjs.length) return emptyState();
     return weeksOf().map((w) => {
       const head = `<div class="block-head"><h3>Week ${w.n}</h3><span class="meta">${esc(shortD(w.a))} – ${esc(shortD(w.b))}</span></div>`;
-      if (!w.shifts.length) return `<article class="block">${head}<p class="empty" style="margin:0">No routes logged this week.</p></article>`;
-      return `<article class="block">${head}${driverTable(byDriver(w.shifts))}</article>`;
+      if (!w.shifts.length && !w.adjs.length) return `<article class="block">${head}<p class="empty" style="margin:0">Nothing logged this week.</p></article>`;
+      return `<article class="block">${head}${driverTable(byDriver(w.shifts, w.adjs))}</article>`;
     }).join("");
   }
 
   function renderPeriod() {
-    if (!state.shifts.length) return emptyState();
-    const weeks = weeksOf().map((w) => ({ ...w, map: new Map(byDriver(w.shifts).map((r) => [r.name.toLowerCase(), r])) }));
+    if (!state.shifts.length && !state.adjs.length) return emptyState();
+    const weeks = weeksOf().map((w) => ({ ...w, map: new Map(byDriver(w.shifts, w.adjs).map((r) => [r.name.toLowerCase(), r])) }));
     const cols = weeks.map((w) => ({
       label: `Wk ${w.n}`,
       cell: (r) => { const x = w.map.get(r.name.toLowerCase()); return x ? money(x.net) : "–"; },
       foot: () => money(totals([...w.map.values()]).net),
     }));
     const st = periodStart(state.periodIdx), en = periodEnd(state.periodIdx);
+    const adjs = [...state.adjs].sort((a, b) => a.date.localeCompare(b.date) || a.driver.localeCompare(b.driver));
     return `<article class="block">
       <div class="block-head"><h3>Pay for ${esc(shortD(st))} – ${esc(shortD(en))}</h3>
         <span class="meta">Resets on <b>${esc(longD(addDays(en, 1)))}</b></span></div>
-      ${driverTable(byDriver(state.shifts), cols)}
+      ${driverTable(byDriver(state.shifts, state.adjs), cols)}
     </article>
-    <p class="note">“To pay” is stops × rate for every route, minus van hire once for each day the driver worked. Week columns show that week's take-home.</p>`;
+    ${adjs.length ? `<article class="block"><div class="block-head"><h3>Charges and payments this period</h3><span class="meta">${adjs.length} entr${adjs.length === 1 ? "y" : "ies"}</span></div>${adjTable(adjs, true)}</article>` : ""}
+    <p class="note">“To pay” is stops × rate for every route, plus bonuses, ridealongs and top ups, minus van hire once for each day worked, minus charges. Week columns show each week's take-home.</p>`;
   }
 
   function renderView() {
@@ -375,14 +480,14 @@ td.neg { color: var(--bad); }
 
   function renderLists() {
     const uniq = (arr) => [...new Map(arr.filter(Boolean).map((v) => [String(v).trim().toLowerCase(), String(v).trim()])).values()].sort();
-    $("dlDrivers").innerHTML = uniq(state.shifts.map((s) => s.driver)).map((v) => `<option value="${esc(v)}">`).join("");
+    $("dlDrivers").innerHTML = uniq(state.shifts.map((s) => s.driver).concat(state.adjs.map((a) => a.driver))).map((v) => `<option value="${esc(v)}">`).join("");
     $("dlRoutes").innerHTML = uniq(state.shifts.map((s) => s.route).concat(state.settings.littleRoutes || [])).map((v) => `<option value="${esc(v)}">`).join("");
     $("dlDepots").innerHTML = uniq(state.shifts.map((s) => s.depot)).map((v) => `<option value="${esc(v)}">`).join("");
   }
 
-  function render() { renderHeader(); renderView(); renderLists(); updatePreview(); }
+  function render() { renderHeader(); renderView(); renderLists(); updatePreview(); updateAdjPreview(); }
 
-  // ---------- form ----------
+  // ---------- route form ----------
   const vanVal = () => ($("fVanLittle").checked ? "little" : "big");
   const rateFor = (van) => (van === "little" ? state.settings.littleRate : state.settings.bigRate);
 
@@ -432,8 +537,13 @@ td.neg { color: var(--bad); }
     $("cancelEdit").hidden = false;
     setMsg($("formMsg"), "");
     updatePreview();
-    $("fStops").focus();
-    $("shiftForm").scrollIntoView({ behavior: "smooth", block: "start" });
+    $("shiftForm").scrollIntoView({ behavior: "smooth", block: "center" });
+    $("fStops").focus({ preventScroll: true });
+  }
+
+  function jumpTo(date) {
+    const i = idxFor(date);
+    if (i !== state.periodIdx) { state.periodIdx = i; state.navigated = true; subscribeAll(); }
   }
 
   async function saveShift(e) {
@@ -454,75 +564,153 @@ td.neg { color: var(--bad); }
       const col = state.db.collection("shifts");
       if (state.editing) await col.doc(state.editing).set(doc); else await col.add(doc);
       setMsg(msg, `Saved ${driver}, route ${route}: ${money(Math.round(stops * pence(rate)))}.`, "ok");
-      const wasEditing = !!state.editing;
-      resetForm(!wasEditing);
-      const i = idxFor(date);
-      if (i !== state.periodIdx) { state.periodIdx = i; state.navigated = true; subscribeShifts(); }
+      resetForm(!state.editing);
+      jumpTo(date);
       $("fDriver").focus();
     } catch (err) {
       setMsg(msg, err && err.code === "quota_exceeded" ? "The log is full. Delete old periods to make room." : "Couldn't save. Check your connection and try again.", "err");
     } finally { $("saveBtn").disabled = !state.canWrite; }
   }
 
-  async function deleteShift(btn) {
+  // ---------- charge / payment form ----------
+  function updateAdjPreview() {
+    const p = $("aPreview");
+    const t = TYPES[$("aType").value];
+    const amt = parseFloat($("aAmount").value);
+    const who = $("aDriver").value.trim() || "the driver";
+    if (!Number.isFinite(amt) || amt <= 0) { p.className = "preview"; p.textContent = "Enter an amount."; return; }
+    p.className = "preview " + (t.kind === "pay" ? "plus" : "minus");
+    p.innerHTML = t.kind === "pay"
+      ? `Adds <b>${money(pence(amt))}</b> to ${esc(who)}'s pay.`
+      : `Takes <b>${money(pence(amt))}</b> off ${esc(who)}'s pay.`;
+  }
+
+  function applyTypeDefault() {
+    const t = TYPES[$("aType").value];
+    const inp = $("aAmount");
+    if (t.def && (inp.value === "" || inp.dataset.auto === "1")) { inp.value = Number(t.def()).toFixed(2); inp.dataset.auto = "1"; }
+    else if (!t.def && inp.dataset.auto === "1") { inp.value = ""; inp.dataset.auto = ""; }
+    updateAdjPreview();
+  }
+
+  function resetAdjForm(keepDate) {
+    const d = $("aDate").value;
+    $("adjForm").reset();
+    $("aAmount").dataset.auto = "";
+    $("aDate").value = keepDate && d ? d : todayS();
+    state.editingAdj = null;
+    $("adjTitle").textContent = "Add a charge or payment";
+    $("aSaveBtn").textContent = "Save";
+    $("aCancelEdit").hidden = true;
+    applyTypeDefault();
+  }
+
+  function startEditAdj(id) {
+    const a = state.adjs.find((x) => x.id === id);
+    if (!a) return;
+    state.editingAdj = id;
+    $("aDate").value = a.date; $("aDriver").value = a.driver; $("aType").value = TYPES[a.type] ? a.type : "bonus";
+    $("aAmount").value = Number(a.amount).toFixed(2); $("aAmount").dataset.auto = "";
+    $("aNote").value = a.note || "";
+    $("adjTitle").textContent = "Edit charge or payment";
+    $("aSaveBtn").textContent = "Save changes";
+    $("aCancelEdit").hidden = false;
+    setMsg($("aMsg"), "");
+    updateAdjPreview();
+    $("adjForm").scrollIntoView({ behavior: "smooth", block: "center" });
+    $("aAmount").focus({ preventScroll: true });
+  }
+
+  async function saveAdj(e) {
+    e.preventDefault();
+    const msg = $("aMsg");
+    if (!state.db) { setMsg(msg, "Saving isn't available here. Open this page on claude.ai while signed in.", "err"); return; }
+    const date = $("aDate").value, driver = $("aDriver").value.trim(), type = $("aType").value, note = $("aNote").value.trim();
+    const amount = parseFloat($("aAmount").value);
+    const missing = [!date && "date", !driver && "driver name", !(Number.isFinite(amount) && amount > 0) && "amount"].filter(Boolean);
+    if (missing.length) { setMsg(msg, `Add the ${missing.join(", ")} before saving.`, "err"); return; }
+    const t = TYPES[type];
+    const doc = { date, driver, type, kind: t.kind, amount: Math.round(amount * 100) / 100, note, savedAt: new Date().toISOString() };
+    $("aSaveBtn").disabled = true;
+    try {
+      const col = state.db.collection("adjustments");
+      if (state.editingAdj) await col.doc(state.editingAdj).set(doc); else await col.add(doc);
+      setMsg(msg, `Saved ${t.label.toLowerCase()} for ${driver}: ${t.kind === "pay" ? "+" : "−"}${money(pence(amount))}.`, "ok");
+      resetAdjForm(!state.editingAdj);
+      jumpTo(date);
+    } catch (err) {
+      setMsg(msg, err && err.code === "quota_exceeded" ? "The log is full. Delete old periods to make room." : "Couldn't save. Check your connection and try again.", "err");
+    } finally { $("aSaveBtn").disabled = !state.canWrite; }
+  }
+
+  async function deleteEntry(btn) {
     if (!btn.classList.contains("armed")) {
       btn.classList.add("armed"); btn.textContent = "Confirm";
       setTimeout(() => { btn.classList.remove("armed"); btn.textContent = "Delete"; }, 3500);
       return;
     }
     btn.disabled = true;
+    const coll = btn.dataset.coll, id = btn.dataset.del;
     try {
-      await state.db.collection("shifts").doc(btn.dataset.del).delete();
-      if (state.editing === btn.dataset.del) resetForm();
-    } catch (err) { btn.disabled = false; setMsg($("formMsg"), "Couldn't delete that route. Try again.", "err"); }
+      await state.db.collection(coll).doc(id).delete();
+      if (coll === "shifts" && state.editing === id) resetForm();
+      if (coll === "adjustments" && state.editingAdj === id) resetAdjForm();
+    } catch (err) { btn.disabled = false; setMsg(coll === "shifts" ? $("formMsg") : $("aMsg"), "Couldn't delete that entry. Try again.", "err"); }
   }
 
   // ---------- settings ----------
   function fillSettingsForm() {
     const s = state.settings;
     $("sBig").value = s.bigRate; $("sLittle").value = s.littleRate; $("sHire").value = s.vanHire;
+    $("sDropped").value = s.droppedCharge; $("sRide").value = s.ridealongRate;
     $("sStart").value = anchor(); $("sLittleRoutes").value = (s.littleRoutes || []).join(", ");
   }
   async function saveSettings(e) {
     e.preventDefault();
     const msg = $("settingsMsg");
     if (!state.db) { setMsg(msg, "Saving isn't available here.", "err"); return; }
-    const big = parseFloat($("sBig").value), little = parseFloat($("sLittle").value), hire = parseFloat($("sHire").value), start = $("sStart").value;
-    if (![big, little, hire].every((n) => Number.isFinite(n) && n >= 0) || !start) { setMsg(msg, "Fill in all three amounts and the start date.", "err"); return; }
+    const nums = ["sBig", "sLittle", "sHire", "sDropped", "sRide"].map((id) => parseFloat($(id).value));
+    const start = $("sStart").value;
+    if (!nums.every((n) => Number.isFinite(n) && n >= 0) || !start) { setMsg(msg, "Fill in every amount and the start date.", "err"); return; }
+    const [big, little, hire, dropped, ride] = nums;
     const littleRoutes = $("sLittleRoutes").value.split(",").map((x) => x.trim()).filter(Boolean);
     $("saveSettings").disabled = true;
     try {
-      await state.db.doc("settings/main").set({ bigRate: big, littleRate: little, vanHire: hire, periodStart: start, littleRoutes });
+      await state.db.doc("settings/main").set({ bigRate: big, littleRate: little, vanHire: hire, droppedCharge: dropped, ridealongRate: ride, periodStart: start, littleRoutes });
       setMsg(msg, "Settings saved.", "ok");
     } catch (err) { setMsg(msg, "Couldn't save settings. Try again.", "err"); }
     finally { $("saveSettings").disabled = !state.canWrite; }
   }
 
   // ---------- data ----------
-  let unsubShifts = null, loadTimer = null;
+  let unsubs = [], loadTimer = null;
   function showBanner(text) { $("banner").textContent = text; $("banner").hidden = !text; }
 
-  function subscribeShifts() {
-    render();
-    if (!state.db) return;
-    if (unsubShifts) unsubShifts();
-    state.shifts = []; state.loading = true; render();
+  function subscribeAll() {
+    if (!state.db) { render(); return; }
+    unsubs.forEach((u) => u()); unsubs = [];
+    state.shifts = []; state.adjs = []; state.loading = true; render();
     clearTimeout(loadTimer);
     loadTimer = setTimeout(() => showBanner("The wage log can't be reached right now. What you see may be out of date."), 10000);
-    const q = state.db.collection("shifts").where("date", ">=", periodStart(state.periodIdx)).where("date", "<=", periodEnd(state.periodIdx));
-    unsubShifts = q.onSnapshot((snap) => {
-      state.shifts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-      if (!snap.metadata.fromCache) { state.loading = false; clearTimeout(loadTimer); showBanner(""); }
+    const a = periodStart(state.periodIdx), b = periodEnd(state.periodIdx);
+    const ready = { shifts: false, adjustments: false };
+    const listen = (coll, key) => state.db.collection(coll).where("date", ">=", a).where("date", "<=", b).onSnapshot((snap) => {
+      state[key] = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      if (!snap.metadata.fromCache) ready[coll] = true;
+      if (ready.shifts && ready.adjustments && state.loading) { state.loading = false; clearTimeout(loadTimer); showBanner(""); }
       render();
     }, () => { state.loading = false; clearTimeout(loadTimer); showBanner("The wage log stopped updating. Reload the page to reconnect."); render(); });
+    unsubs.push(listen("shifts", "shifts"), listen("adjustments", "adjs"));
   }
 
-  function goPeriod(i, manual) { state.periodIdx = i; if (manual) state.navigated = true; subscribeShifts(); }
+  function goPeriod(i, manual) { state.periodIdx = i; if (manual) state.navigated = true; subscribeAll(); }
 
   // ---------- wiring ----------
   $("fDate").value = todayS();
+  $("aDate").value = todayS();
   state.periodIdx = idxFor(todayS());
   fillSettingsForm();
+  applyTypeDefault();
   render();
 
   $("shiftForm").addEventListener("submit", saveShift);
@@ -531,6 +719,13 @@ td.neg { color: var(--bad); }
   $("fVanLittle").addEventListener("change", updatePreview);
   $("fRoute").addEventListener("change", autofillRoute);
   $("cancelEdit").addEventListener("click", () => { resetForm(); setMsg($("formMsg"), ""); });
+
+  $("adjForm").addEventListener("submit", saveAdj);
+  $("aType").addEventListener("change", applyTypeDefault);
+  $("aAmount").addEventListener("input", () => { $("aAmount").dataset.auto = ""; updateAdjPreview(); });
+  $("aDriver").addEventListener("input", updateAdjPreview);
+  $("aCancelEdit").addEventListener("click", () => { resetAdjForm(); setMsg($("aMsg"), ""); });
+
   $("settingsForm").addEventListener("submit", saveSettings);
   $("prevP").addEventListener("click", () => goPeriod(state.periodIdx - 1, true));
   $("nextP").addEventListener("click", () => goPeriod(state.periodIdx + 1, true));
@@ -542,33 +737,36 @@ td.neg { color: var(--bad); }
   });
   try { const t = localStorage.getItem("tab"); if (t === "day" || t === "week" || t === "period") { state.tab = t; renderView(); } } catch (_) {}
   $("view").addEventListener("click", (e) => {
-    const ed = e.target.closest("[data-edit]"); if (ed) return startEdit(ed.dataset.edit);
-    const del = e.target.closest("[data-del]"); if (del) return deleteShift(del);
+    const ed = e.target.closest("[data-edit]");
+    if (ed) return ed.dataset.coll === "shifts" ? startEdit(ed.dataset.edit) : startEditAdj(ed.dataset.edit);
+    const del = e.target.closest("[data-del]"); if (del) return deleteEntry(del);
   });
 
   function setWritable(ok) {
     state.canWrite = ok;
-    $("saveBtn").disabled = !ok; $("saveSettings").disabled = !ok;
+    $("saveBtn").disabled = !ok; $("aSaveBtn").disabled = !ok; $("saveSettings").disabled = !ok;
     render();
   }
 
   (async () => {
     const claude = window.claude;
-    if (!claude || !claude.use) { showBanner("Saving isn't available here. Open this page on claude.ai while signed in."); setWritable(false); state.loading = false; render(); return; }
+    const unavailable = () => { showBanner("Saving isn't available here. Open this page on claude.ai while signed in."); setWritable(false); state.loading = false; render(); };
+    if (!claude || !claude.use) return unavailable();
     const [db, user] = await Promise.all([claude.use("db"), claude.use("user")]);
-    if (!db) { showBanner("Saving isn't available here. Open this page on claude.ai while signed in."); setWritable(false); state.loading = false; render(); return; }
+    if (!db) return unavailable();
     state.db = db;
     if (user) { try { const can = await user.can("data.write"); if (can === false) { setWritable(false); showBanner("You can view these wages but not change them."); } } catch (_) {} }
     db.doc("settings/main").onSnapshot((snap) => {
       const prevAnchor = anchor();
       state.settings = snap.exists ? { ...DEFAULT_SETTINGS, ...snap.data() } : { ...DEFAULT_SETTINGS };
       fillSettingsForm();
+      applyTypeDefault();
       if (anchor() !== prevAnchor) {
         if (!state.navigated) state.periodIdx = idxFor(todayS());
-        subscribeShifts();
+        subscribeAll();
       } else render();
     }, () => {});
-    subscribeShifts();
+    subscribeAll();
   })();
 })();
 </script>
